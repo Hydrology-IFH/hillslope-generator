@@ -296,6 +296,7 @@ def write_to_netcdf(ZZ, SSY, SSX, cell_width):
         v.attrs['units'] = 'm/m'
         v[:, :] = SSX
 
+
 def write_to_tiff(ZZ, cell_width):
     """Write output to tiff
 
@@ -361,6 +362,3 @@ def main(hillslope_shape, nrows, ncols, bottom, top, cell_width, plot, write_out
 
 if __name__ == "__main__":
     main()
-    # main('straight', 24, 12, 10, 12, 1, True, True)
-    # main('concave', 24, 12, 10, 12, 1, True, True)
-    # main('noisy', 24, 12, 10, 12, 1, True, True)

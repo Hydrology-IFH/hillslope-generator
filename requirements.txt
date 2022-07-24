@@ -2,5 +2,6 @@ numpy
 scipy
 matplotlib
 h5netcdf
+rasterio
 click
 pynoise

@@ -10,6 +10,7 @@ dependencies:
     - scipy
     - matplotlib
     - h5netcdf
+    - rasterio
     - click
     - pip:
       - pynoise
