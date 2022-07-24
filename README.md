@@ -3,6 +3,7 @@ Generates an artificial hillslope. The following hillslope shapes are
 available:
 - straight
 - concave
+- convex
 - noisy
 
 ## Usage
@@ -21,5 +22,24 @@ Activate the anaconda environment and and move into the direcory of
 hillslope_generator:
 ```bash
 conda activate hillgen
-python generate_hillslope.py --write-output True
 ```
+**Straight hillslope**
+```bash
+python hillslope_generator --hillslope-shape straight --nrows 24 --ncols 12 --bottom 10 --top 20 --cell-width 10 --write-output True
+```
+**Concave hillslope**
+```bash
+python hillslope_generator --hillslope-shape concave --nrows 24 --ncols 12 --bottom 10 --top 20 --cell-width 10 --write-output True
+```
+**Convex hillslope**
+```bash
+python hillslope_generator --hillslope-shape convex --nrows 24 --ncols 12 --bottom 10 --top 20 --cell-width 10 --write-output True
+```
+**Noisy hillslope**
+```bash
+python hillslope_generator --hillslope-shape noisy --nrows 24 --ncols 12 --bottom 10 --top 20 --cell-width 10 --write-output True
+```
+
+## License
+This software can be distributed freely under the MIT license. Please read the LICENSE for further information.
+© 2022, Robin Schwemmle (<robin.schwemmle@hydrology.uni-freiburg.de>)
