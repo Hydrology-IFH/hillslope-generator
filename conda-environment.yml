@@ -1,0 +1,15 @@
+name: hillgen
+
+channels:
+    - conda-forge
+
+dependencies:
+    - python=3.9
+    - pip
+    - numpy
+    - scipy
+    - matplotlib
+    - h5netcdf
+    - click
+    - pip:
+      - pynoise
