@@ -1,4 +1,9 @@
 ## Hillsope generator
+
+<p align="center">
+<img src="hillslope.png">
+</p>
+
 Generates an artificial hillslope. The following hillslope shapes are
 available:
 - straight
@@ -25,19 +30,19 @@ conda activate hillgen
 ```
 **Straight hillslope**
 ```bash
-python hillslope_generator --hillslope-shape straight --nrows 24 --ncols 12 --bottom 10 --top 20 --cell-width 10 --write-output True
+python hillslope_generator.py --hillslope-shape straight --nrows 12 --ncols 24 --bottom 10 --top 20 --cell-width 10 --write-output
 ```
 **Concave hillslope**
 ```bash
-python hillslope_generator --hillslope-shape concave --nrows 24 --ncols 12 --bottom 10 --top 20 --cell-width 10 --write-output True
+python hillslope_generator.py --hillslope-shape concave --nrows 12 --ncols 24 --bottom 10 --top 20 --cell-width 10 --write-output
 ```
 **Convex hillslope**
 ```bash
-python hillslope_generator --hillslope-shape convex --nrows 24 --ncols 12 --bottom 10 --top 20 --cell-width 10 --write-output True
+python hillslope_generator.py --hillslope-shape convex --nrows 12 --ncols 24 --bottom 10 --top 20 --cell-width 10 --write-output
 ```
 **Noisy hillslope**
 ```bash
-python hillslope_generator --hillslope-shape noisy --nrows 24 --ncols 12 --bottom 10 --top 20 --cell-width 10 --write-output True
+python hillslope_generator.py --hillslope-shape noisy --nrows 12 --ncols 24 --bottom 10 --top 20 --cell-width 10 --write-output
 ```
 
 ## License

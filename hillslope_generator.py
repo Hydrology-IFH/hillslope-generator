@@ -40,7 +40,7 @@ def noisy_hillslope(nrows, ncols, bottom, top, n1div=50, n2div=25, n3div=100,
     p1 = ScaleBias(source0=p, scale=0.33, bias=0.5)
     noisemap = noise_map_plane(nrows, ncols, 6, 10, 1, 5, p1).reshape((nrows, ncols))
     z_diff = top - bottom
-    ZZ = bottom + z_diff * noisemap
+    ZZ = bottom + z_diff * noisemap[:, ::-1]
 
     return ZZ
 
@@ -67,9 +67,9 @@ def straight_hillslope(nrows, ncols, bottom, top):
     ZZ : float
         elevation grid
     """
-    zs = np.linspace(0, 1, nrows)[::-1]
+    zs = np.linspace(0, 1, ncols)
     ZS = np.zeros((nrows, ncols))
-    ZS[:, :] = zs[:, np.newaxis]
+    ZS[:, :] = zs[np.newaxis, :]
     z_diff = top - bottom
     ZZ = bottom + z_diff * ZS
 
@@ -98,10 +98,10 @@ def concave_hillslope(nrows, ncols, bottom, top):
     ZZ : float
         elevation grid
     """
-    x = np.linspace(expon.ppf(0.01), expon.ppf(0.99), nrows)
+    x = np.linspace(expon.ppf(0.01), expon.ppf(0.99), ncols)[::-1]
     zs = expon.pdf(x, scale=1.5)
     ZS = np.zeros((nrows, ncols))
-    ZS[:, :] = zs[:, np.newaxis]
+    ZS[:, :] = zs[np.newaxis, :]
     z_diff = top - bottom
     ZZ = bottom + z_diff * ZS
 
@@ -130,10 +130,10 @@ def convex_hillslope(nrows, ncols, bottom, top):
     ZZ : float
         elevation grid
     """
-    x = np.linspace(expon.ppf(0.01), expon.ppf(0.99), nrows)
+    x = np.linspace(expon.ppf(0.01), expon.ppf(0.99), ncols)
     zs = 1 - expon.pdf(x, scale=1.5)
     ZS = np.zeros((nrows, ncols))
-    ZS[:, :] = zs[:, np.newaxis]
+    ZS[:, :] = zs[np.newaxis, :]
     z_diff = top - bottom
     ZZ = bottom + z_diff * ZS
 
@@ -159,8 +159,8 @@ def calculate_slope(ZZ, cell_width):
     SSX : np.ndarray
         slope grid in x-direction
     """
-    SSY = np.abs(np.diff(ZZ[:-1, 1:-1], axis=0)/cell_width)
-    SSX = np.abs(np.diff(ZZ[1:-1, :-1], axis=1)/cell_width)
+    SSX = np.abs(np.diff(ZZ[:-1, 1:-1], axis=0)/cell_width)
+    SSY = np.abs(np.diff(ZZ[1:-1, :-1], axis=1)/cell_width)
 
     return SSX, SSY
 
@@ -197,10 +197,11 @@ def plot_elevation_grid(ZZ, cell_width):
     ax.set_zlim(zmin, zmax)
     ax.set_xlim(-int(nrows/2)*cell_width, int(nrows/2)*cell_width)
     ax.set_ylim(-int(ncols/2)*cell_width, int(ncols/2)*cell_width)
-    ax.set_xlabel(r'x')
-    ax.set_ylabel(r'y')
+    ax.set_xlabel(r'[m in x-direction]')
+    ax.set_ylabel(r'[m in y-direction]')
     ax.set_zlabel(r'[m a.s.l.]')
-    fig.colorbar(scamap, shrink=0.4, label=r'slope [m $m^{-1}$]')
+    fig.colorbar(scamap, shrink=0.4, label=r'elevation [m a.s.l.]')
+    plt.show()
 
     return fig
 
@@ -223,8 +224,10 @@ def plot_slope_grid(ZZ, SS, cell_width):
     Y = np.arange(-int(ncols/2)*cell_width, int(ncols/2)*cell_width, cell_width)
     YY, XX = np.meshgrid(Y, X)
 
-    smin = np.ceil(np.min(SS))
-    smax = np.floor(np.max(SS))
+    smin = 0
+    smax = np.round(np.max(SS), 1) + 0.1
+    zmin = int(np.floor(np.min(ZZ)))
+    zmax = int(np.ceil(np.max(ZZ)))
 
     norm = matplotlib.colors.Normalize(vmin=smin, vmax=smax)
     scamap = plt.cm.ScalarMappable(cmap='BrBG', norm=norm)
@@ -234,13 +237,14 @@ def plot_slope_grid(ZZ, SS, cell_width):
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_surface(XX, YY, ZZ, facecolors=fcolors, cmap=cm.BrBG,
                     vmin=smin, vmax=smax)
-    ax.set_zlim(0, 25)
-    ax.set_xlim(-int(ncols/2)*cell_width, int(ncols/2)*cell_width)
+    ax.set_zlim(zmin, zmax)
+    ax.set_xlim(-int(nrows/2)*cell_width, int(nrows/2)*cell_width)
     ax.set_ylim(-int(ncols/2)*cell_width, int(ncols/2)*cell_width)
-    ax.set_xlabel(r'x')
-    ax.set_ylabel(r'y')
+    ax.set_xlabel(r'[m in x-direction]')
+    ax.set_ylabel(r'[m in y-direction]')
     ax.set_zlabel(r'[m a.s.l.]')
     fig.colorbar(scamap, shrink=0.4, label=r'slope [m $m^{-1}$]')
+    plt.show()
 
     return fig
 
@@ -327,8 +331,8 @@ def write_to_tiff(ZZ, cell_width):
 
 
 @click.option("-hs", "--hillslope-shape", type=click.Choice(['straight', 'concave', 'convex', 'noisy']), default='straight')
-@click.option("-nr", "--nrows", type=int, default=24)
-@click.option("-nc", "--ncols", type=int, default=12)
+@click.option("-nr", "--nrows", type=int, default=12)
+@click.option("-nc", "--ncols", type=int, default=24)
 @click.option("-b", "--bottom", type=float, default=10)
 @click.option("-t", "--top", type=float, default=12)
 @click.option("-cw", "--cell-width", type=float, default=1)
@@ -351,8 +355,7 @@ def main(hillslope_shape, nrows, ncols, bottom, top, cell_width, plot, write_out
     SSX, SSY = calculate_slope(ZZ, cell_width)
 
     if plot:
-        plot_elevation_grid(ZZ, cell_width)
-        # plot_slope_grid(ZZ, SSY, cell_width)
+        plot_slope_grid(ZZ, SSY, cell_width)
 
     if write_output:
         write_to_netcdf(ZZ, SSY, SSX, cell_width)
