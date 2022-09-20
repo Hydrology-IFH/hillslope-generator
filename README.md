@@ -15,7 +15,7 @@ available:
 **First step:**
 Download the repository and install required Python packages in an environment:
 ```bash
-git clone https://github.com/schwemro/hillslope_generator.git
+git clone https://github.com/Hydrology-IFH/hillslope_generator.git
 cd hillslope_generator
 conda env create -f conda-environment.yml
 ```
